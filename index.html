@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>McGuire Grandbabies</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream:      #F6F1EB;
+      --cream-dark: #E4D9CE;
+      --parchment:  #FDFAF6;
+      --ink:        #2C2420;
+      --ink-mid:    #5C4A3A;
+      --ink-light:  #9A8474;
+      --gold:       #C8A96E;
+
+      /* Rylee — deep rose pink */
+      --r-track:  #FEE6F0;
+      --r-arc:    #C84070;
+      --r-accent: #E070A8;
+
+      /* Reese — soft dusty rose */
+      --e-track:  #FBF0F4;
+      --e-arc:    #D8789A;
+      --e-accent: #EAA0BC;
+    }
+
+    html { font-size: 16px; height: 100%; }
+    body {
+      height: 100%;
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      background: linear-gradient(160deg, #F9F4EF 0%, #F4EDE5 55%, #EFE6DC 100%);
+      color: var(--ink);
+    }
+
+    /* ── Text size control ── */
+    .size-control {
+      position: fixed;
+      top: 10px; right: 10px;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(253,250,246,0.94);
+      border: 1px solid var(--cream-dark);
+      border-radius: 20px;
+      padding: 5px 9px;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.07);
+    }
+    .size-btn {
+      font-family: 'Jost', sans-serif;
+      font-weight: 500;
+      color: var(--ink-light);
+      cursor: pointer;
+      user-select: none;
+      line-height: 1;
+      background: none;
+      border: none;
+      padding: 0 1px;
+      touch-action: manipulation;
+    }
+    .size-btn.sm { font-size: 10px; }
+    .size-btn.lg { font-size: 15px; }
+    .size-slider {
+      -webkit-appearance: none;
+      width: 52px; height: 2px;
+      background: var(--cream-dark);
+      outline: none; border-radius: 2px;
+    }
+    .size-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 14px; height: 14px;
+      border-radius: 50%; background: var(--gold); cursor: pointer;
+    }
+    .size-slider::-moz-range-thumb {
+      width: 14px; height: 14px;
+      border-radius: 50%; background: var(--gold); cursor: pointer; border: none;
+    }
+
+    /* ── Page ── */
+    .page {
+      height: 100vh;
+      height: 100dvh;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 14px 13px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* ── Header ── */
+    header { text-align: center; flex-shrink: 0; }
+    .title-eyebrow {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.78rem;
+      letter-spacing: 0.1em;
+      color: var(--ink-light);
+      margin-bottom: 2px;
+    }
+    .title-main {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.55rem;
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 6px;
+    }
+    .header-rule {
+      display: flex; align-items: center; gap: 8px;
+      margin: 0 auto 4px; max-width: 140px;
+    }
+    .rule-line { flex: 1; height: 1px; background: var(--cream-dark); }
+    .rule-dot  { width: 4px; height: 4px; background: var(--gold); border-radius: 50%; flex-shrink: 0; }
+    .header-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--ink-light);
+    }
+
+    /* ── Cards grid ── */
+    .cards {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 11px;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--parchment);
+      border: 1px solid rgba(200, 185, 170, 0.55);
+      border-radius: 14px;
+      padding: 13px 13px 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      overflow: hidden;
+      box-shadow:
+        0 2px 10px rgba(44, 36, 32, 0.07),
+        0 1px 3px rgba(44, 36, 32, 0.04);
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 18%; right: 18%;
+      height: 3px;
+      border-radius: 0 0 3px 3px;
+    }
+    .card-rylee::before { background: linear-gradient(90deg, transparent, var(--r-accent), transparent); }
+    .card-reese::before { background: linear-gradient(90deg, transparent, var(--e-accent), transparent); }
+
+    /* ── Name & due — tight at top ── */
+    .card-name {
+      font-family: 'Playfair Display', serif;
+      font-weight: 400;
+      font-size: clamp(0.84rem, 3.8vw, 1.02rem);
+      line-height: 1.22;
+      color: var(--ink);
+      flex-shrink: 0;
+    }
+    .card-due {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.84rem;
+      color: var(--ink-light);
+      flex-shrink: 0;
+      margin-bottom: 5px;
+    }
+
+    /* ── Donut — fixed size, no flex-grow ── */
+    .donut-wrap {
+      flex-shrink: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .donut-svg {
+      width: 100%;
+      max-width: 156px;
+      height: auto;
+      aspect-ratio: 1;
+      display: block;
+    }
+
+    /* ── HMS — right below donut ── */
+    .hms-line {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.85rem;
+      color: var(--ink-mid);
+      letter-spacing: 0.06em;
+      text-align: center;
+      flex-shrink: 0;
+      margin-top: 3px;
+    }
+
+    /* ── Dev section ── */
+    .dev-section {
+      flex: 1;
+      min-height: 0;
+      border-top: 1px solid rgba(200, 185, 170, 0.4);
+      margin-top: 6px;
+      padding-top: 6px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-evenly;
+    }
+
+    /* Two-line header: gestational age + weeks to go */
+    .dev-age-row {
+      font-family: 'Jost', sans-serif;
+      font-weight: 500;
+      font-size: 0.72rem;
+      letter-spacing: 0.11em;
+      text-transform: uppercase;
+      color: var(--ink-mid);
+      line-height: 1.2;
+    }
+    .dev-week-sub {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--ink-light);
+      line-height: 1.2;
+      margin-bottom: 3px;
+    }
+    .dev-bullet {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.82rem;
+      line-height: 1.32;
+      color: var(--ink-mid);
+      padding-left: 12px;
+      position: relative;
+    }
+    .card-rylee .dev-bullet::before { content: '–'; position: absolute; left: 0; color: var(--r-arc); font-weight: 500; }
+    .card-reese .dev-bullet::before { content: '–'; position: absolute; left: 0; color: var(--e-arc); font-weight: 500; }
+
+    /* ── Fruit box — pinned to the very bottom ── */
+    .fruit-box {
+      flex-shrink: 0;
+      text-align: center;
+      border-top: 1px solid rgba(200, 185, 170, 0.45);
+      margin-top: 6px;
+      padding: 11px 6px 15px;
+      border-radius: 0 0 13px 13px;
+    }
+    .card-rylee .fruit-box { background: rgba(200, 64, 112, 0.09); }
+    .card-reese .fruit-box { background: rgba(216, 120, 154, 0.09); }
+
+    .fruit-box-emoji {
+      display: block;
+      font-size: 3.2rem;
+      line-height: 1.1;
+      margin-bottom: 5px;
+    }
+    .fruit-box-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--ink-mid);
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Arrived ── */
+    .arrived-msg { text-align: center; }
+    .arrived-msg .a-big {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--ink);
+      display: block;
+    }
+    .arrived-msg .a-sub {
+      font-family: 'Jost', sans-serif;
+      font-weight: 300;
+      font-size: 0.65rem;
+      letter-spacing: 0.08em;
+      color: var(--ink-light);
+      display: block;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="size-control">
+    <button class="size-btn sm" id="sizeDown">A</button>
+    <input type="range" class="size-slider" id="sizeSlider" min="11" max="20" value="16" step="1" />
+    <button class="size-btn lg" id="sizeUp">A</button>
+  </div>
+
+  <div class="page">
+    <header>
+      <p class="title-eyebrow">Counting down to</p>
+      <h1 class="title-main">McGuire Grandbabies</h1>
+      <div class="header-rule">
+        <span class="rule-line"></span>
+        <span class="rule-dot"></span>
+        <span class="rule-line"></span>
+      </div>
+      <p class="header-sub">For Grandpa Koye and Grandma Val</p>
+    </header>
+
+    <div class="cards">
+
+      <!-- Rylee — deep rose pink -->
+      <div class="card card-rylee">
+        <h2 class="card-name">Rylee Jeanne</h2>
+        <p class="card-due">Due June 2, 2026</p>
+
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#FEE6F0" stroke-width="7"/>
+            <circle cx="50" cy="50" r="40" fill="none"
+                    stroke="#C84070" stroke-width="7" stroke-linecap="round"
+                    stroke-dasharray="0 251.3" transform="rotate(-90 50 50)"
+                    id="rylee-arc"/>
+            <text x="50" y="37"
+                  text-anchor="middle" dominant-baseline="middle"
+                  font-family="Playfair Display, serif"
+                  font-size="22" font-weight="400" fill="#2C2420"
+                  id="rylee-days">--</text>
+            <text x="50" y="58" text-anchor="middle"
+                  font-family="Jost, sans-serif"
+                  font-size="7.5" letter-spacing="0.4" fill="#9A8474">DAYS REMAINING</text>
+          </svg>
+        </div>
+
+        <p class="hms-line" id="rylee-hms">-- h &nbsp; -- m &nbsp; -- s</p>
+        <div class="dev-section" id="rylee-dev"></div>
+        <div class="fruit-box" id="rylee-fruit">
+          <span class="fruit-box-emoji">–</span>
+          <span class="fruit-box-label">Loading...</span>
+        </div>
+      </div>
+
+      <!-- Reese — soft dusty rose -->
+      <div class="card card-reese">
+        <h2 class="card-name">Reese Rosemary</h2>
+        <p class="card-due">Due August 11, 2026</p>
+
+        <div class="donut-wrap">
+          <svg class="donut-svg" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="40" fill="none" stroke="#FBF0F4" stroke-width="7"/>
+            <circle cx="50" cy="50" r="40" fill="none"
+                    stroke="#D8789A" stroke-width="7" stroke-linecap="round"
+                    stroke-dasharray="0 251.3" transform="rotate(-90 50 50)"
+                    id="reese-arc"/>
+            <text x="50" y="37"
+                  text-anchor="middle" dominant-baseline="middle"
+                  font-family="Playfair Display, serif"
+                  font-size="22" font-weight="400" fill="#2C2420"
+                  id="reese-days">--</text>
+            <text x="50" y="58" text-anchor="middle"
+                  font-family="Jost, sans-serif"
+                  font-size="7.5" letter-spacing="0.4" fill="#9A8474">DAYS REMAINING</text>
+          </svg>
+        </div>
+
+        <p class="hms-line" id="reese-hms">-- h &nbsp; -- m &nbsp; -- s</p>
+        <div class="dev-section" id="reese-dev"></div>
+        <div class="fruit-box" id="reese-fruit">
+          <span class="fruit-box-emoji">–</span>
+          <span class="fruit-box-label">Loading...</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ── Text size ──────────────────────────────────────────────────
+    const slider   = document.getElementById('sizeSlider');
+    const sizeDown = document.getElementById('sizeDown');
+    const sizeUp   = document.getElementById('sizeUp');
+    function applySize(px) {
+      px = Math.max(11, Math.min(20, px));
+      document.documentElement.style.fontSize = px + 'px';
+      slider.value = px;
+    }
+    slider.addEventListener('input', () => applySize(+slider.value));
+    sizeDown.addEventListener('click', () => applySize(+slider.value - 1));
+    sizeUp.addEventListener('click',   () => applySize(+slider.value + 1));
+
+    // ── Weekly data ────────────────────────────────────────────────
+    const weekly = {
+      4:  { emoji:'🌱', fruit:'Poppy seed',       b:['Just implanted in the uterus','Brain and heart beginning to form','About 1mm in size','Amniotic sac developing','Placenta starting to grow'] },
+      5:  { emoji:'🌾', fruit:'Sesame seed',      b:['Heart beginning to beat','Neural tube closing','Arm and leg buds forming','Circulatory system developing','About the size of a pen tip'] },
+      6:  { emoji:'🫘', fruit:'Lentil',           b:['Heart beating ~100 times/min','Arm and leg buds visible','Face taking shape','Jaw and chin forming','Tiny nostrils appearing'] },
+      7:  { emoji:'🫐', fruit:'Blueberry',        b:['Brain developing rapidly','Nostrils and upper lip forming','Hands and feet emerging','Liver producing red blood cells','Appendix and pancreas present'] },
+      8:  { emoji:'🍓', fruit:'Raspberry',        b:['Fingers and toes forming','All essential organs begun','Making small movements','Eyelids nearly covering eyes','Taste buds beginning to form'] },
+      9:  { emoji:'🍇', fruit:'Grape',            b:['Tiny muscles forming','Eyelids fused to protect eyes','Moving, though not felt yet','Earlobes now visible','Heart divided into four chambers'] },
+      10: { emoji:'🍊', fruit:'Kumquat',          b:['Now officially a fetus','Vital organs forming','Cartilage becoming bone','Swallowing amniotic fluid','Tooth buds appearing'] },
+      11: { emoji:'🌿', fruit:'Fig',              b:['Fingers and toes separated','Hiccupping already','Breathing amniotic fluid','Skin is still translucent','Hair follicles forming'] },
+      12: { emoji:'🍋', fruit:'Lime',             b:['Reflexes developing','Kidneys producing urine','Fingers can open and close','Vocal cords forming','Digestive system practicing'] },
+      13: { emoji:'🍋', fruit:'Lemon',            b:['Second trimester begins','Thumb-sucking possible','Intestines moving into place','Bones becoming visible on scans','Unique fingerprints forming'] },
+      14: { emoji:'🍑', fruit:'Peach',            b:['Fine lanugo hair forming','Can squint and frown','Roof of mouth fully formed','Making facial expressions','Kidneys producing urine steadily'] },
+      15: { emoji:'🍎', fruit:'Apple',            b:['Bones hardening','Ears in nearly final position','Moving quite actively','Can sense bright light','Legs now longer than arms'] },
+      16: { emoji:'🥑', fruit:'Avocado',          b:['Eyes sensitive to light','Breathing movements beginning','Scalp pattern developing','Tiny toenails growing','Muscles getting stronger'] },
+      17: { emoji:'🍐', fruit:'Pear',             b:['Can hear outside sounds','Fat beginning to develop','Fingerprints fully formed','Skeleton hardening from cartilage','Umbilical cord growing thicker'] },
+      18: { emoji:'🫑', fruit:'Bell pepper',      b:['Ears in final position','May startle at loud sounds','Movements may be felt now','Yawning in the womb','Myelin coating nerves'] },
+      19: { emoji:'🥭', fruit:'Mango',            b:['Vernix forming to protect skin','All five senses developing','Hears voices outside the womb','Arms and legs proportional now','Unique sleep patterns emerging'] },
+      20: { emoji:'🍌', fruit:'Banana',           b:['Halfway through the pregnancy','Practicing swallowing','Movements felt clearly now','Producing meconium','Taste buds fully working'] },
+      21: { emoji:'🥕', fruit:'Carrot',           b:['Eyebrows and eyelids present','Responds to touch and voice','Moving more than ever','Bone marrow making blood cells','Coordinated movements starting'] },
+      22: { emoji:'🍈', fruit:'Papaya',           b:['Looks like a miniature newborn','Grip developing','Irises still gaining color','Lips becoming more distinct','Inner ear fully developed'] },
+      23: { emoji:'🍊', fruit:'Grapefruit',       b:['Fat beginning to fill in skin','Sense of movement developed','Lungs developing rapidly','Can hear music','Skin turning opaque'] },
+      24: { emoji:'🌽', fruit:'Ear of corn',      b:['Viability milestone reached','Lungs producing surfactant','Face fully formed','Inner ear balance developed','Gaining about 6 oz per week'] },
+      25: { emoji:'🍠', fruit:'Rutabaga',         b:['Baby fat developing','Hair now has color and texture','Capillaries forming under skin','Nostrils beginning to open','Startle reflex present'] },
+      26: { emoji:'🧅', fruit:'Scallion',         b:['Eyes beginning to open','Responds to light','Brain and lungs developing fast','Inhaling and exhaling amniotic fluid','Immune system building'] },
+      27: { emoji:'🥦', fruit:'Cauliflower',      b:['Third trimester begins','REM sleep cycles starting','May already be dreaming','Recognizes parents\u2019 voices','Hiccups felt from outside'] },
+      28: { emoji:'🍆', fruit:'Eggplant',         b:['Blink reflex present','Gaining half a pound per week','Brain forming folds and grooves','Can cough and hiccup','Body fat around 2\u20133%'] },
+      29: { emoji:'🎃', fruit:'Butternut squash', b:['Muscles and lungs maturing','Billions of neurons forming daily','Gaining strength steadily','Head growing for brain development','Bones fully developed but soft'] },
+      30: { emoji:'🥬', fruit:'Cabbage',          b:['Eyes open during waking hours','Brain growing rapidly','Settling into sleep rhythms','Red blood cells from bone marrow','Surroundings getting snug'] },
+      31: { emoji:'🥥', fruit:'Coconut',          b:['All five senses fully working','Gaining a third of a pound weekly','Immune system strengthening','Processing information and signals','Can turn head side to side'] },
+      32: { emoji:'🍍', fruit:'Pineapple',        b:['Fingernails and toenails formed','Practicing breathing movements','Turning head-down for birth','Skin becoming soft and smooth','Lungs nearly mature'] },
+      33: { emoji:'🍑', fruit:'Cantaloupe',       b:['Skull hardening','Sleep cycles established','Likely settling head-down','Immune system developing rapidly','Pupils can detect light changes'] },
+      34: { emoji:'🍈', fruit:'Honeydew melon',   b:['Central nervous system maturing','Fingernails reach fingertips','Almost fully ready','Vernix coating getting thicker','Fat layers filling in'] },
+      35: { emoji:'🥬', fruit:'Head of lettuce',  b:['Kidneys fully developed','Running out of room to move','Liver processing waste','Hearing is fully mature','Grasping firmly now'] },
+      36: { emoji:'🥬', fruit:'Swiss chard',      b:['Shedding vernix and lanugo','Considered early term now','Nearly fully ready for birth','Gaining about an ounce a day','Digestive system still maturing'] },
+      37: { emoji:'🧅', fruit:'Leek',             b:['Full term reached','Practicing breathing and sucking','Could arrive any day now','Firm grasp ready for your finger','Organs fully functional'] },
+      38: { emoji:'🍉', fruit:'Mini watermelon',  b:['Lanugo is mostly gone','Brain and lungs still maturing','Ready and waiting','Forming first stool','Circadian rhythms established'] },
+      39: { emoji:'🎃', fruit:'Small pumpkin',    b:['New skin forming underneath','Fully ready for the world','Any day now','Chest is becoming more prominent','Antibodies transferring from mom'] },
+      40: { emoji:'🎃', fruit:'Small pumpkin',    b:['Fully ready to meet you','All systems are go','Your world is about to change','Lungs fully mature','Average 7\u20138 lbs at birth'] },
+      41: { emoji:'🎃', fruit:'Small pumpkin',    b:['Still perfectly healthy','On her own perfect schedule','Ready for her grand entrance','Extra time for final touches','Fully prepared for life outside'] },
+    };
+
+    function getWeek(wa) {
+      const w = Math.min(41, Math.max(4, Math.round(wa)));
+      return { w, ...(weekly[w] || weekly[40]) };
+    }
+
+    function renderCard(id, weeksAlong, weeksLeft) {
+      const { w, emoji, fruit, b } = getWeek(weeksAlong);
+      const exactWeeks = Math.floor(weeksAlong);
+      const exactDays  = Math.floor((weeksAlong - exactWeeks) * 7);
+      const ageTxt = `${exactWeeks} week${exactWeeks !== 1 ? 's' : ''}, ${exactDays} day${exactDays !== 1 ? 's' : ''}`;
+      const wlR = Math.round(weeksLeft);
+      const wlTxt = weeksLeft < 1 ? 'Less than a week to go'
+                  : `${wlR} week${wlR !== 1 ? 's' : ''} to go`;
+
+      // Dev section: two-line header + 5 bullets
+      let bullets = '';
+      for (let i = 0; i < Math.min(5, b.length); i++) {
+        bullets += `<p class="dev-bullet">${b[i]}</p>`;
+      }
+      document.getElementById(`${id}-dev`).innerHTML = `
+        <p class="dev-age-row">${ageTxt}</p>
+        <p class="dev-week-sub">${wlTxt}</p>
+        ${bullets}`;
+
+      // Fruit box
+      document.getElementById(`${id}-fruit`).innerHTML = `
+        <span class="fruit-box-emoji">${emoji}</span>
+        <span class="fruit-box-label">Size of a ${fruit}</span>`;
+    }
+
+    // ── Countdown ──────────────────────────────────────────────────
+    const PREG_DAYS = 280;
+    const CIRC      = 251.3;
+    const babies = [
+      { id: 'rylee', due: new Date('2026-06-02T00:00:00-07:00') },
+      { id: 'reese', due: new Date('2026-08-11T00:00:00-07:00') },
+    ];
+    function pad2(n) { return String(Math.floor(n)).padStart(2, '0'); }
+
+    function tick() {
+      const nowPT = new Date(
+        new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
+      );
+      babies.forEach(({ id, due }) => {
+        const duePT = new Date(
+          due.toLocaleString('en-US', { timeZone: 'America/Los_Angeles' })
+        );
+        const diff = duePT - nowPT;
+
+        if (diff <= 0) {
+          document.getElementById(`${id}-days`).textContent = '0';
+          document.getElementById(`${id}-hms`).textContent = '';
+          document.getElementById(`${id}-arc`).setAttribute('stroke-dasharray', `${CIRC} 0`);
+          document.getElementById(`${id}-dev`).innerHTML = `
+            <div class="arrived-msg">
+              <span class="a-big">She is here</span>
+              <span class="a-sub">Welcome to the world, little one</span>
+            </div>`;
+          return;
+        }
+
+        const s     = Math.floor(diff / 1000);
+        const days  = Math.floor(s / 86400);
+        const hours = Math.floor((s % 86400) / 3600);
+        const mins  = Math.floor((s % 3600) / 60);
+        const secs  = s % 60;
+
+        document.getElementById(`${id}-days`).textContent = days;
+        document.getElementById(`${id}-hms`).textContent =
+          `${pad2(hours)} h \u2002 ${pad2(mins)} m \u2002 ${pad2(secs)} s`;
+
+        const conception = new Date(duePT.getTime() - PREG_DAYS * 86400 * 1000);
+        const pct  = Math.min(1, Math.max(0, (nowPT - conception) / (duePT - conception)));
+        const fill = pct * CIRC;
+        document.getElementById(`${id}-arc`).setAttribute(
+          'stroke-dasharray', `${fill.toFixed(2)} ${(CIRC - fill).toFixed(2)}`
+        );
+        renderCard(id, (nowPT - conception) / (7 * 86400 * 1000), diff / (7 * 86400 * 1000));
+      });
+    }
+
+    tick();
+    setInterval(tick, 1000);
+  </script>
+</body>
+</html>
