@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>McGuire Grandbabies</title>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
@@ -28,7 +28,7 @@
       --e-accent: #EAA0BC;
     }
 
-    html { font-size: 16px; height: 100%; }
+    html { font-size: 15px; height: 100%; }
     body {
       height: 100%;
       font-family: 'Jost', sans-serif;
@@ -37,62 +37,16 @@
       color: var(--ink);
     }
 
-    /* ── Text size control ── */
-    .size-control {
-      position: fixed;
-      top: 10px; right: 10px;
-      z-index: 200;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(253,250,246,0.94);
-      border: 1px solid var(--cream-dark);
-      border-radius: 20px;
-      padding: 5px 9px;
-      backdrop-filter: blur(6px);
-      -webkit-backdrop-filter: blur(6px);
-      box-shadow: 0 1px 8px rgba(0,0,0,0.07);
-    }
-    .size-btn {
-      font-family: 'Jost', sans-serif;
-      font-weight: 500;
-      color: var(--ink-light);
-      cursor: pointer;
-      user-select: none;
-      line-height: 1;
-      background: none;
-      border: none;
-      padding: 0 1px;
-      touch-action: manipulation;
-    }
-    .size-btn.sm { font-size: 10px; }
-    .size-btn.lg { font-size: 15px; }
-    .size-slider {
-      -webkit-appearance: none;
-      width: 52px; height: 2px;
-      background: var(--cream-dark);
-      outline: none; border-radius: 2px;
-    }
-    .size-slider::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 14px; height: 14px;
-      border-radius: 50%; background: var(--gold); cursor: pointer;
-    }
-    .size-slider::-moz-range-thumb {
-      width: 14px; height: 14px;
-      border-radius: 50%; background: var(--gold); cursor: pointer; border: none;
-    }
-
     /* ── Page ── */
     .page {
       height: 100vh;
       height: 100dvh;
       max-width: 860px;
       margin: 0 auto;
-      padding: 14px 13px 12px;
+      padding: 12px 12px max(12px, env(safe-area-inset-bottom));
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 9px;
     }
 
     /* ── Header ── */
@@ -164,7 +118,7 @@
     .card-name {
       font-family: 'Playfair Display', serif;
       font-weight: 400;
-      font-size: clamp(0.84rem, 3.8vw, 1.02rem);
+      font-size: 1.0rem;
       line-height: 1.22;
       color: var(--ink);
       flex-shrink: 0;
@@ -295,12 +249,6 @@
 </head>
 <body>
 
-  <div class="size-control">
-    <button class="size-btn sm" id="sizeDown">A</button>
-    <input type="range" class="size-slider" id="sizeSlider" min="11" max="20" value="16" step="1" />
-    <button class="size-btn lg" id="sizeUp">A</button>
-  </div>
-
   <div class="page">
     <header>
       <p class="title-eyebrow">Counting down to</p>
@@ -381,19 +329,6 @@
   </div>
 
   <script>
-    // ── Text size ──────────────────────────────────────────────────
-    const slider   = document.getElementById('sizeSlider');
-    const sizeDown = document.getElementById('sizeDown');
-    const sizeUp   = document.getElementById('sizeUp');
-    function applySize(px) {
-      px = Math.max(11, Math.min(20, px));
-      document.documentElement.style.fontSize = px + 'px';
-      slider.value = px;
-    }
-    slider.addEventListener('input', () => applySize(+slider.value));
-    sizeDown.addEventListener('click', () => applySize(+slider.value - 1));
-    sizeUp.addEventListener('click',   () => applySize(+slider.value + 1));
-
     // ── Weekly data ────────────────────────────────────────────────
     const weekly = {
       4:  { emoji:'🌱', fruit:'Poppy seed',       b:['Just implanted in the uterus','Brain and heart beginning to form','About 1mm in size','Amniotic sac developing','Placenta starting to grow'] },
